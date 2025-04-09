@@ -23,6 +23,9 @@ export class QueryService {
 
 
     constructor(serviceOptions: QueryServiceOptions, databaseOptions: DatabaseOptions) {
+        this.port = serviceOptions.port;
+        this.host = serviceOptions.host || 'localhost';
+
         this.server = Hapi.server({
             port: serviceOptions.port,
             host: serviceOptions.host || 'localhost',
@@ -43,32 +46,34 @@ export class QueryService {
         });
     }
 
-    private async makeQuery(query: string) {
-        try {
-            const result: QueryResult =  await this.pool.query(query);
-        } catch (error) {
-            console.error('Query failed with error: ', error);
-        }
-    }
 
-    private async queryHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
-        const query = 'SELECT * FROM your_table';  // Пример запроса
+    private async queryHandler(request: Hapi.Request, responseToolkit: Hapi.ResponseToolkit) {
+        const { query } = request.query; // Получаем SQL-запрос из параметра "query" в строке GET запроса
         try {
             const result: QueryResult = await this.pool.query(query);
-            return h.response(result.rows).code(200); // Отправка данных в JSON
+            return responseToolkit.response(result.rows).code(200); // Отправка данных в JSON
         } catch (error) {
             console.error('Query failed with error: ', error);
-            return h.response({ error: 'Query failed' }).code(500); // Ошибка запроса
+            return responseToolkit.response({ error: 'Query failed' }).code(500); // Ошибка запроса
         }
     }
 
 
     public async start(): Promise<void> {
 
-
-
-
-        await this.server.start();
-        console.log(`Server running on https://${this.host}:${this.port}`);
+        try {
+            await this.server.start();
+            process.on('SIGINT', async () => {
+                console.log('Stopping server...');
+                await this.server.stop();
+                process.exit(0);
+            });
+            console.log(`Server running at: ${this.server.info.uri}`);
+        } catch (err) {
+            console.error('Failed to start server:', err);
+            process.exit(1);
+        }
     }
+
+
 }

@@ -1,11 +1,12 @@
-import * as Hapi from '@hapi/hapi';
 import {QueryService} from "./service";
 import {readFileSync} from 'fs';
 
 function main (): void {
 
-    let serviceConfigFileContent = readFileSync('../configs/service-config.json', 'utf8');
-    let dataBaseFileContent = readFileSync('../configs/database-config.json', 'utf8');
+    let serviceConfigFileContent = readFileSync('./configs/service-config.json', 'utf8');
+    let dataBaseFileContent = readFileSync('./configs/database-config.json', 'utf8');
+    // let serviceConfigFileContent = readFileSync('C:\\All_Random\\git\\DB-project\\db-querry-service\\configs\\service-config.json', 'utf8');
+    // let dataBaseFileContent = readFileSync('C:\\All_Random\\git\\DB-project\\db-querry-service\\configs\\database-config.json', 'utf8');
 
     let serviceConfig = JSON.parse(serviceConfigFileContent);
     let dataBaseConfig = JSON.parse(dataBaseFileContent)
@@ -21,6 +22,14 @@ function main (): void {
         password: dataBaseConfig.password,
     });
 
-    // service.start().then(r => );
+    service.start()
+        .catch(error => {
+            console.log("Service start failed with error: ", error);
+            return process.exit(1);
+        });
+
 
 }
+
+
+main()
