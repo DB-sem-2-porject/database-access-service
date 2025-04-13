@@ -1,7 +1,10 @@
-import * as Hapi from '@hapi/hapi';
-import {Pool, QueryResult} from "pg";
+import * as Hapi from "@hapi/hapi";
+import pg from 'pg';
+import { QueryResult } from "pg";
+const { Pool } = pg;
 
 
+export const NUMBER:number = 5;
 
 export interface QueryServiceOptions {
     port: number;
@@ -19,7 +22,7 @@ export class QueryService {
     private port: number;
     private host: string;
     private server: Hapi.Server;
-    private pool: Pool;
+    private pool: pg.Pool;
 
 
     constructor(serviceOptions: QueryServiceOptions, databaseOptions: DatabaseOptions) {
@@ -59,10 +62,11 @@ export class QueryService {
     }
 
 
-    public async start(): Promise<void> {
+    public start(): void {
 
         try {
-            await this.server.start();
+            this.server.start().then(r => {
+            });
             process.on('SIGINT', async () => {
                 console.log('Stopping server...');
                 await this.server.stop();

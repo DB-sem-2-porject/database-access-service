@@ -22,11 +22,7 @@ function main (): void {
         password: dataBaseConfig.password,
     });
 
-    service.start()
-        .catch(error => {
-            console.log("Service start failed with error: ", error);
-            return process.exit(1);
-        });
+    service.start();
 
 
 }
