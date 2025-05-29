@@ -5,8 +5,6 @@ function main (): void {
 
     let serviceConfigFileContent = readFileSync('./configs/service-config.json', 'utf8');
     let dataBaseFileContent = readFileSync('./configs/database-config.json', 'utf8');
-    // let serviceConfigFileContent = readFileSync('C:\\All_Random\\git\\DB-project\\db-querry-service\\configs\\service-config.json', 'utf8');
-    // let dataBaseFileContent = readFileSync('C:\\All_Random\\git\\DB-project\\db-querry-service\\configs\\database-config.json', 'utf8');
 
     let serviceConfig = JSON.parse(serviceConfigFileContent);
     let dataBaseConfig = JSON.parse(dataBaseFileContent)

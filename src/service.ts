@@ -51,13 +51,13 @@ export class QueryService {
 
 
     private async queryHandler(request: Hapi.Request, responseToolkit: Hapi.ResponseToolkit) {
-        const { query } = request.query; // Получаем SQL-запрос из параметра "query" в строке GET запроса
+        const { query } = request.query;
         try {
             const result: QueryResult = await this.pool.query(query);
-            return responseToolkit.response(result.rows).code(200); // Отправка данных в JSON
+            return responseToolkit.response(result.rows).code(200);
         } catch (error) {
             console.error('Query failed with error: ', error);
-            return responseToolkit.response({ error: 'Query failed' }).code(500); // Ошибка запроса
+            return responseToolkit.response({ error: 'Query failed' }).code(500);
         }
     }
 
