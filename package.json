@@ -1,12 +1,15 @@
 {
   "name": "db-query-service",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "run-ts": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' src/index.ts"
   },
   "devDependencies": {
+    "@types/koa": "^2.15.0",
     "@types/node": "^22.14.1",
     "@types/pg": "^8.11.12",
     "typescript": "^5.5.3"
@@ -14,12 +17,20 @@
   "private": true,
   "dependencies": {
     "@apollo/server": "^4.12.2",
+    "@as-integrations/koa": "^1.1.1",
     "@hapi/hapi": "^21.4.0",
+    "@koa/router": "^13.1.0",
+    "@types/koa__router": "^12.0.4",
+    "@types/koa-bodyparser": "^4.3.12",
     "class-validator": "^0.14.2",
     "database-entity-service-lib": "github:DB-sem-2-porject/database-entity-service-lib",
+    "glob": "^11.0.2",
     "graphql": "^16.11.0",
+    "koa": "^2.16.1",
+    "koa-bodyparser": "^4.4.1",
     "pg": "^8.14.1",
     "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
     "type-graphql": "^2.0.0-rc.2",
     "typeorm": "^0.3.24"
   }

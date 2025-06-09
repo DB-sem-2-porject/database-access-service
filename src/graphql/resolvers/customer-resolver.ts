@@ -1,71 +1,83 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
+import {Resolver, Mutation, Arg, ArgsType, Field, Int} from 'type-graphql';
 import { Customer } from 'database-entity-service-lib';
 import { CustomerService } from 'database-entity-service-lib';
-import { DataSource } from 'typeorm';
+import {DataSource, FindOptionsWhere} from 'typeorm';
+import { createBaseResolver, createInputType } from './base-resolver.js';
 
-@Resolver(Customer)
-export class CustomerResolver {
-    private customerService: CustomerService;
+// Создаем Input тип для Customer
+@ArgsType()
+class CreateCustomerInput {
+    @Field()
+    fullName!: string;
 
+    @Field({ nullable: true })
+    phoneNumber?: string;
+
+    @Field({ nullable: true })
+    birthday?: string;
+
+    @Field({ nullable: true })
+    notes?: string;
+}
+
+@ArgsType()
+class UpdateCustomerInput {
+    @Field({ nullable: true })
+    fullName?: string;
+
+    @Field({ nullable: true })
+    phoneNumber?: string;
+
+    @Field({ nullable: true })
+    birthday?: string;
+
+    @Field({ nullable: true })
+    notes?: string;
+}
+
+// Создаем базовый класс
+const BaseCustomerResolver = createBaseResolver('Customer', Customer, CustomerService);
+
+@Resolver(() => Customer)
+export class CustomerResolver extends BaseCustomerResolver {
     constructor(dataSource: DataSource) {
-        this.customerService = new CustomerService(dataSource);
+        super(dataSource);
     }
 
-    // CREATE
+    // Создание - теперь с единым объектом
     @Mutation(() => Customer)
     async createCustomer(
-        @Arg('fullName') fullName: string,
-        @Arg('phoneNumber', { nullable: true }) phoneNumber?: string,
-        @Arg('birthday', { nullable: true }) birthday?: string,
-        @Arg('notes', { nullable: true }) notes?: string
+        @Arg('input', () => CreateCustomerInput) input: CreateCustomerInput
     ): Promise<Customer> {
-        return this.customerService.createCustomer({
-            fullName,
-            phoneNumber,
-            birthday,
-            notes,
+        return this.service.create({
+            ...input,
             registrationDate: new Date().toISOString()
         });
     }
 
-    // READ
-    @Query(() => [Customer])
-    async customers(): Promise<Customer[]> {
-        return this.customerService.readAllCustomers();
+    // Обновление - тоже упрощено
+    @Mutation(() => [Customer])
+    async updateCustomersByFilter(
+        @Arg('where', () => String) whereJson: string,
+        @Arg('input', () => UpdateCustomerInput) input: UpdateCustomerInput
+    ): Promise<Customer[]> {
+        const where = JSON.parse(whereJson) as FindOptionsWhere<Customer>;
+        return this.service.update({ where }, input);
     }
 
-    @Query(() => Customer, { nullable: true })
-    async customer(@Arg('id') id: number): Promise<Customer | null> {
-        return this.customerService.readCustomer(id);
-    }
-
-    // UPDATE
-    @Mutation(() => Customer)
-    async updateCustomer(
-        @Arg('id') id: number,
-        @Arg('fullName', { nullable: true }) fullName?: string,
-        @Arg('phoneNumber', { nullable: true }) phoneNumber?: string,
-        @Arg('birthday', { nullable: true }) birthday?: string,
-        @Arg('notes', { nullable: true }) notes?: string
-    ): Promise<Customer> {
-        const updatedCustomer = await this.customerService.updateCustomer(id, {
-            fullName,
-            phoneNumber,
-            birthday,
-            notes
-        });
-
-        if (!updatedCustomer) {
-            throw new Error(`Customer with id ${id} not found`);
-        }
-
-        return updatedCustomer;
-    }
-
-    // DELETE
     @Mutation(() => Boolean)
-    async deleteCustomer(@Arg('id') id: number): Promise<boolean> {
-        await this.customerService.deleteCustomer({ id });
+    async deleteCustomer(@Arg('id', () => Int) id: number): Promise<boolean> {
+        await this.service.delete({ id });
+        return true;
+    }
+
+    // Метод для массового удаления с фильтром
+    @Mutation(() => Boolean)
+    async deleteCustomers(
+        @Arg('filter', () => String) filter: string
+    ): Promise<boolean> {
+        const where = this.buildWhereCondition(JSON.parse(filter));
+        await this.service.delete(where);
         return true;
     }
 }
