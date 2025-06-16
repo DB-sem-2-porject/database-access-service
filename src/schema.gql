@@ -1,0 +1,139 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type QueryResult {
+  result: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Customer {
+  id: ID!
+  fullName: String!
+  phoneNumber: String
+  registrationDate: String!
+  birthday: String
+  notes: String
+}
+
+type TradingPoint {
+  id: ID!
+  name: String!
+  type: String!
+  address: String!
+  sizeSqm: Float
+  rentCost: Float
+  utilityCost: Float
+  counterCount: Float
+  floorsCount: Float!
+  openingDate: DateTime
+  active: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Employee {
+  id: ID!
+  fullName: String!
+  role: String!
+  tradingPoint: TradingPoint!
+  hireDate: DateTime!
+  baseSalary: Float!
+  phone: String
+  email: String
+  active: Boolean!
+}
+
+type DepartmentStoreSection {
+  id: ID!
+  tradingPoint: TradingPoint!
+  name: String!
+  floorNumber: Float!
+  managerId: Employee!
+}
+
+type TradingPointHall {
+  id: ID!
+  tradingPoint: TradingPoint!
+  section: DepartmentStoreSection!
+  name: String!
+  floorNumber: Float!
+  sizeSqm: Float
+}
+
+type ProductDirectory {
+  id: ID!
+  name: String!
+  description: String
+  category: String!
+  measurement: String!
+  createdAt: DateTime!
+}
+
+type Provider {
+  id: ID!
+  name: String!
+  phone: String
+  email: String
+  address: String
+  active: Boolean!
+  registrationDate: DateTime!
+}
+
+type Order {
+  id: ID!
+  provider: Provider!
+  orderDate: DateTime!
+  status: String!
+  totalCost: Float!
+  notes: String
+}
+
+type ProductRequest {
+  id: ID!
+  tradingPoint: TradingPoint!
+  employee: Employee!
+  requestDate: DateTime!
+  status: String!
+  notes: Boolean
+}
+
+type Sale {
+  id: ID!
+  tradingPointId: Float!
+  tradingPoint: TradingPoint!
+  employeeId: Float!
+  employee: Employee!
+  customerId: Float
+  customer: Customer!
+  saleDate: DateTime!
+  totalAmount: Float!
+  paymentMethod: String!
+}
+
+type Query {
+  hello: String!
+  runQuery(query: String!): QueryResult!
+  customers: [Customer!]!
+  customer(id: Float!): Customer
+  trading_points: [TradingPoint!]!
+  trading_point(id: Float!): TradingPoint
+}
+
+type Mutation {
+  createCustomer(fullName: String!, phoneNumber: String, registrationDate: String, birthday: String, notes: String): Customer!
+  updateCustomer(id: Float!, fullName: String, phoneNumber: String, registrationDate: String, birthday: String, notes: String): [Customer!]!
+  updateCustomerBy(whereJson: String!, updateData: String!): [Customer!]!
+  deleteCustomer(id: Float!): Boolean!
+  createTradingPoint(name: String!, type: String!, address: String!, sizeSqm: Float!, rentCost: Float!, utilityCost: Float!, counterCount: Float!, floorsCount: Float!, openingDate: DateTime, active: Boolean!): TradingPoint!
+  updateTradingPointById(id: Float!, name: String!, type: String!, address: String!, sizeSqm: Float!, rentCost: Float!, utilityCost: Float!, counterCount: Float!, floorsCount: Float!, openingDate: DateTime!, active: Boolean!): [TradingPoint!]!
+  updateTradingPointBy(whereJson: String!, updateData: String!): [TradingPoint!]!
+  deleteTradingPoint(id: Float!): Boolean!
+}
