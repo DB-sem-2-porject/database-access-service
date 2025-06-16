@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app-module.ts';
+import { AppModule } from './app.module.ts';
 import { DataSource } from 'typeorm';
 import {readFileSync} from "node:fs";
 import axios from 'axios';

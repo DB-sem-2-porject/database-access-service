@@ -6,12 +6,13 @@ import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Request } from 'express';
 import { Resolver, Query } from '@nestjs/graphql';
-import {AppController} from "./app-controller.js";
-import {DatabaseAccessService} from "./database-access-service.js";
-import {DatabaseResolver} from "./graphql/database-resolver.js";
-import {CustomerService, TradingPointService} from "database-entity-service-lib";
-import {CustomerResolver} from "./graphql/customer-resolver.js";
-import {TradingPointResolver} from "./graphql/trading-point-resolver.js";
+import { AppController } from './app.controller.js';
+import { SqlController } from './app.controller.ts';
+import { DatabaseAccessService } from './database-access.service.js';
+import { DatabaseResolver } from './graphql/database-resolver.js';
+import { CustomerService, TradingPointService } from 'database-entity-service-lib';
+import { CustomerResolver } from './graphql/customer.resolver.js';
+import { TradingPointResolver } from './graphql/trading-point.resolver.js';
 
 @Resolver()
 export class AppResolver {
@@ -52,7 +53,7 @@ export class AppModule {
                     },
                 }),
             ],
-            controllers: [AppController],
+            controllers: [AppController, SqlController],
         };
     }
 }

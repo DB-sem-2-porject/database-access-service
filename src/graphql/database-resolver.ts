@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, ObjectType, Field } from '@nestjs/graphql';
-import { DatabaseAccessService } from '../database-access-service.ts';
+import { DatabaseAccessService } from '../database-access.service.ts';
 import { GraphQLJSON } from 'graphql-type-json';
 
 @ObjectType()
